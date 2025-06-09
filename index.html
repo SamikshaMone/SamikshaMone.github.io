@@ -1,0 +1,336 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of Samiksha Mone, .NET Full Stack Developer with 2.8 years of experience at Accenture, skilled in .NET Core, React, and Azure.">
+    <meta name="keywords" content=".NET Full Stack Developer, .NET Core, React, Azure, Accenture, Software Engineer, Samiksha Mone">
+    <meta name="author" content="Samiksha Mone">
+    <title>Samiksha Mone - .NET Full Stack Developer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f6f5;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #003087 0%, #005566 100%);
+            color: #fff;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        nav {
+            background: #1a1a1a;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 1.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #00b7eb;
+        }
+        section {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #003087;
+            border-bottom: 3px solid #00b7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        .skills-grid div {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        .skills-grid div:hover {
+            transform: translateY(-5px);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        ul li::before {
+            content: '•';
+            color: #00b7eb;
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+        .experience, .project, .certification {
+            margin-bottom: 2rem;
+        }
+        .experience h3, .project h3 {
+            color: #003087;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .experience p, .project p {
+            margin: 0.5rem 0;
+        }
+        a {
+            color: #00b7eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            background: #003087;
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            header p {
+                font-size: 1.1rem;
+            }
+            nav a {
+                margin: 0 0.8rem;
+                font-size: 1rem;
+            }
+            section {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Samiksha Mone</h1>
+        <p>.NET Full Stack Developer with 2.8 Years of Experience at Accenture</p>
+    </header>
+    <nav>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section id="about">
+        <h2>About Me</h2>
+        <p>I am a .NET Full Stack Developer with 2.8 years of experience at Accenture, delivering scalable and high-quality software solutions using .NET Core, React, and Azure. Skilled in coding, testing, and client collaboration, I ensure 100% quality assurance standards. Passionate about designing innovative applications, I aim to contribute to digital transformation initiatives by building robust and user-friendly systems.</p>
+    </section>
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="skills-grid">
+            <div>
+                <strong>Backend</strong>
+                <ul>
+                    <li>.NET Core</li>
+                    <li>ASP.NET MVC</li>
+                    <li>C#</li>
+                    <li>Entity Framework</li>
+                    <li>LINQ</li>
+                    <li>REST APIs</li>
+                    <li>SignalR</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Frontend</strong>
+                <ul>
+                    <li>React</li>
+                    <li>JavaScript</li>
+                    <li>HTML</li>
+                    <li>CSS</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Databases</strong>
+                <ul>
+                    <li>SQL Server</li>
+                    <li>MySQL</li>
+                    <li>NoSQL</li>
+                    <li>Azure SQL</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Cloud & Tools</strong>
+                <ul>
+                    <li>Azure DevOps (CI/CD)</li>
+                    <li>Azure App Services</li>
+                    <li>Docker</li>
+                    <li>Git</li>
+                    <li>Visual Studio</li>
+                    <li>VS Code</li>
+                    <li>Swagger</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Testing</strong>
+                <ul>
+                    <li>xUnit</li>
+                    <li>Moq</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section id="experience">
+        <h2>Professional Experience</h2>
+        <div class="experience">
+            <h3>Custom Software Engineering Analyst, Accenture</h3>
+            <p><em>Nov 2022 – Present</em></p>
+            <p><strong>Projects: Digital Personal Assistant Dashboard, Employee Onboarding Systems</strong></p>
+            <ul>
+                <li>Designed and developed a .NET Core and React-based dashboard, increasing user engagement by 30% through optimized UI/UX.</li>
+                <li>Built and documented RESTful APIs with Swagger, reducing onboarding time by 25% via real-time data integration.</li>
+                <li>Optimized SQL Server queries using Entity Framework and LINQ, cutting data retrieval time by 30%.</li>
+                <li>Automated test scripts with xUnit and Moq, achieving 80% unit test coverage and 100% error-free client deployments.</li>
+                <li>Implemented JWT-based authentication and SignalR for real-time updates, enhancing security and user experience.</li>
+                <li>Leveraged Azure DevOps for CI/CD pipelines and Docker for containerized deployments, ensuring 100% on-time delivery.</li>
+                <li>Produced detailed documentation, including flowcharts and MIS reports, improving system maintainability.</li>
+            </ul>
+            <p><strong>Technologies</strong>: .NET Core, ASP.NET MVC, C#, React, JavaScript, HTML, CSS, SignalR, Azure DevOps, Docker, Git, Swagger, SQL Server</p>
+        </div>
+    </section>
+    <section id="projects">
+        <h2>Personal Projects</h2>
+        <div class="project">
+            <h3>Employee Task Management System</h3>
+            <p>Developed a .NET Core and React application for task assignment and tracking, supporting 500+ users with role-based access. Integrated SignalR for real-time notifications and Azure SQL, improving task update speed by 20%.</p>
+            <p><strong>Technologies</strong>: .NET Core, React, Azure SQL, SignalR, Azure App Services</p>
+            <p><a href="https://github.com/SamikshaMone/employee-task-management">View on GitHub</a></p>
+        </div>
+        <div class="project">
+            <h3>Personal Finance Tracker</h3>
+            <p>Built a secure .NET Core and React app for expense tracking, using JWT for authentication and RESTful APIs. Implemented Docker and Redis caching, reducing API response time by 25%.</p>
+            <p><strong>Technologies</strong>: .NET Core, React, MySQL, JWT, Docker, Redis</p>
+            <p><a href="https://github.com/SamikshaMone/personal-finance-tracker">View on GitHub</a></p>
+        </div>
+        <div class="project">
+            <h3>Real-Time Stock Trading System</h3>
+            <p>Developed a .NET Core and MySQL-based system for user/stock management and order processing, handling 1000+ concurrent users. Built RESTful APIs with Swagger and tested with xUnit, improving transaction efficiency by 20%.</p>
+            <p><strong>Technologies</strong>: .NET Core, MySQL, SQL, Swagger, xUnit</p>
+            <p><a href="https://github.com/SamikshaMone/stock-trading-system">View on GitHub</a></p>
+        </div>
+    </section>
+    <section id="certifications">
+        <h2>Certifications</h2>
+        <ul>
+            <li class="certification">Microsoft Certified: Azure Developer Associate</li>
+            <li class="certification">Microsoft Learn: .NET Core Fundamentals</li>
+            <li class="certification">Delivery Foundation Academy</li>
+        </ul>
+    </section>
+    <section id="education">
+        <h2>Education</h2>
+        <div>
+            <h3>MTech in Software Engineering (Pursuing, Expected 2026)</h3>
+            <p>BITS Pilani</p>
+        </div>
+        <div>
+            <h3>Bachelor of Engineering, Information Technology (2018–2022)</h3>
+            <p>Prof. Ram Meghe Institute of Technology & Research, Amravati, Maharashtra</p>
+        </div>
+    </section>
+    <section id="contact">
+        <h2>Contact</h2>
+        <ul>
+            <li><strong>Email</strong>: <a href="mailto:monesamiksha@gmail.com">monesamiksha@gmail.com</a></li>
+            <li><strong>Phone</strong>: +91-9503432969</li>
+            <li><strong>LinkedIn</strong>: <a href="https://linkedin.com/in/samiksha-mone">linkedin.com/in/samiksha-mone</a></li>
+            <li><strong>GitHub</strong>: <a href="https://github.com/SamikshaMone">github.com/SamikshaMone</a></li>
+        </ul>
+    </section>
+    <footer>
+        <p>© 2025 Samiksha Mone. All rights reserved.</p>
+    </footer>
+    <script>
+        // Smooth scrolling for nav links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
